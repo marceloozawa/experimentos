@@ -16,6 +16,7 @@ descritor = vector()
 lv = vector()
 metodo = vector()
 acerto = vector()
+resample = vector()
 
 cont = 1
 
@@ -31,8 +32,8 @@ pc = "-"
 path.ini = "BaseadoExemplos/EliminacaoExemplos/"
 path.fim = ".csv"
 
-for(i in 1:1) {
-  for(k in 1:6) {
+for(i in 1:6) {
+  for(k in 1:5) {
     path = paste(path.ini, bases[i],  "/", "BE_", tecnica, "_", bases[i], path.fim, sep = "")
     dataset = read.csv(path, header = TRUE)
     predictors = names(dataset)[names(dataset) != "class"]
@@ -44,20 +45,24 @@ for(i in 1:1) {
     
     aux = unlist(strsplit(bases[i], "_"))
     
-    tec[cont] = tecnica
-    prim[cont] = pc
-    classe[cont] = "-------"
-    descritor[cont] = aux[1]
-    lv[cont] = aux[2]
-    metodo[cont] = methods[k]
-    acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
-    cont = cont + 1
+    for(r in 1:30) {
+      tec[cont] = tecnica
+      prim[cont] = pc
+      classe[cont] = "-------"
+      descritor[cont] = aux[1]
+      lv[cont] = aux[2]
+      metodo[cont] = methods[k]
+      resample[cont] = r
+      acerto[cont] = model$resample$Accuracy[r]
+      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      cont = cont + 1
+    }
   }
 }
 
 
-# resultados = data.frame(tec, prim, classe, descritor, lv, metodo, acerto)
-# colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Acerto")
+#resultados = data.frame(tec, prim, classe, descritor, lv, metodo, resample, acerto)
+#colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Resample", "Acuracia")
 
 
 #                      --- CRIACAO DE ROTULOS (PRIM?RIO) ---
@@ -69,7 +74,7 @@ path.ini = "BaseadoExemplos/CriacaoRotulos/Primario/"
 path.fim = ".csv"
 
 for(i in 1:6) {
-  for(k in 6:6) {
+  for(k in 1:6) {
     path = paste(path.ini, bases[i],  "/", "BE_", tecnica, "_", pc, "_", bases[i], path.fim, sep = "")
     dataset = read.csv(path, header = TRUE)
     predictors = names(dataset)[names(dataset) != "class"]
@@ -78,15 +83,18 @@ for(i in 1:6) {
     
     aux = unlist(strsplit(bases[i], "_"))
     
-    tec[cont] = tecnica
-    prim[cont] = pc
-    classe[cont] = "-------"
-    descritor[cont] = aux[1]
-    lv[cont] = aux[2]
-    metodo[cont] = methods[k]
-    acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
-    
-    cont = cont + 1
+    for(r in 1:30) {
+      tec[cont] = tecnica
+      prim[cont] = pc
+      classe[cont] = "-------"
+      descritor[cont] = aux[1]
+      lv[cont] = aux[2]
+      metodo[cont] = methods[k]
+      resample[cont] = r
+      acerto[cont] = model$resample$Accuracy[r]
+      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      cont = cont + 1
+    }
   }
 }
 #resultados = data.frame(tec, prim, classe, descritor, lv, metodo, acerto)
@@ -133,7 +141,7 @@ path.ini = "BaseadoExemplos/ConversaoExemplos/EliminacaoRotulos/Primario/"
 path.fim = ".csv"
 
 for(i in 1:6) {
-  for(k in 6:6) {
+  for(k in 1:6) {
     path = paste(path.ini, bases[i],  "/", "BE_CE_", tecnica, "_", pc, "_", bases[i], path.fim, sep = "")
     dataset = read.csv(path, header = TRUE)
     predictors = names(dataset)[names(dataset) != "class"]
@@ -142,15 +150,18 @@ for(i in 1:6) {
     
     aux = unlist(strsplit(bases[i], "_"))
     
-    tec[cont] = tecnica
-    prim[cont] = pc
-    classe[cont] = "-------"
-    descritor[cont] = aux[1]
-    lv[cont] = aux[2]
-    metodo[cont] = methods[k]
-    acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
-    
-    cont = cont + 1
+    for(r in 1:30) {
+      tec[cont] = tecnica
+      prim[cont] = pc
+      classe[cont] = "-------"
+      descritor[cont] = aux[1]
+      lv[cont] = aux[2]
+      metodo[cont] = methods[k]
+      resample[cont] = r
+      acerto[cont] = model$resample$Accuracy[r]
+      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      cont = cont + 1
+    }
   }
 }
 #resultados = data.frame(tec, prim, classe, descritor, lv, metodo, acerto)
@@ -163,23 +174,25 @@ path.ini = "BaseadoExemplos/ConversaoExemplos/EliminacaoRotulos/Completo/"
 path.fim = ".csv"
 
 for(i in 1:6) {
-  for(k in 6:6) {
+  for(k in 1:6) {
     path = paste(path.ini, bases[i],  "/", "BE_CE_", tecnica, "_", pc, "_", bases[i], path.fim, sep = "")
     dataset = read.csv(path, header = TRUE)
     predictors = names(dataset)[names(dataset) != "class"]
     
     model = caret::train(class ~ ., data = dataset, method = methods[k], trControl = ctrl, tuneLength = 5)
     
-    aux = unlist(strsplit(bases[i], "_"))
-    tec[cont] = tecnica
-    prim[cont] = pc
-    classe[cont] = "-------"
-    descritor[cont] = aux[1]
-    lv[cont] = aux[2]
-    metodo[cont] = methods[k]
-    acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
-    
-    cont = cont + 1
+    for(r in 1:30) {
+      tec[cont] = tecnica
+      prim[cont] = pc
+      classe[cont] = "-------"
+      descritor[cont] = aux[1]
+      lv[cont] = aux[2]
+      metodo[cont] = methods[k]
+      resample[cont] = r
+      acerto[cont] = model$resample$Accuracy[r]
+      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      cont = cont + 1
+    }
   }
 }
 
@@ -242,5 +255,5 @@ for(i in 1:6) {
 #   }
 # }
 
-resultados = data.frame(tec, prim, classe, descritor, lv, metodo, acerto)
-colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Acerto")
+resultados = data.frame(tec, prim, classe, descritor, lv, metodo, resample, acerto)
+colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Resample", "Acuracia")
