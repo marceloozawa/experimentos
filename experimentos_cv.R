@@ -17,10 +17,13 @@ lv = vector()
 metodo = vector()
 acerto = vector()
 resample = vector()
+precision = vector()
+recall = vector()
+fmeasure = vector()
 
 cont = 1
 
-ctrl = trainControl(method = "repeatedcv", number = 10, repeats = 3)
+ctrl = trainControl(method = "repeatedcv", number = 10, repeats = 3, savePredictions = "final")
 
 
 
@@ -42,6 +45,12 @@ for(i in 1:6) {
     # ctrl = trainControl(method = "cv", index = auxi)
     
     model = caret::train(class ~ ., data = dataset, method = methods[k], trControl = ctrl, tuneLength = 5)
+    pred = model$pred$pred
+    ref = model$pred$obs
+    cm = caret::confusionMatrix(pred, ref)
+    prec = mean(cm$byClass[(7*2+1):(7*2+7)], na.rm = TRUE)
+    rec = mean(cm$byClass[(7*0+1):(7*0+7)], na.rm = TRUE)
+    fm = (2*prec*rec)/(prec+rec)
     
     aux = unlist(strsplit(bases[i], "_"))
     
@@ -54,15 +63,18 @@ for(i in 1:6) {
       metodo[cont] = methods[k]
       resample[cont] = r
       acerto[cont] = model$resample$Accuracy[r]
-      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      precision[cont] = prec
+      recall[cont] = rec
+      fmeasure[cont] = fm
+      #melhor[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
       cont = cont + 1
     }
   }
 }
 
 
-#resultados = data.frame(tec, prim, classe, descritor, lv, metodo, resample, acerto)
-#colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Resample", "Acuracia")
+#resultados = data.frame(tec, prim, classe, descritor, lv, metodo, resample, acerto, precision, recall, fmeasure)
+#colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Resample", "Acuracia", "Precisao", "Recall", "F-Measure")
 
 
 #                      --- CRIACAO DE ROTULOS (PRIM?RIO) ---
@@ -80,6 +92,12 @@ for(i in 1:6) {
     predictors = names(dataset)[names(dataset) != "class"]
     
     model = caret::train(class ~ ., data = dataset, method = methods[k], trControl = ctrl, tuneLength = 5)
+    pred = model$pred$pred
+    ref = model$pred$obs
+    cm = caret::confusionMatrix(pred, ref)
+    prec = mean(cm$byClass[(7*2+1):(7*2+7)], na.rm = TRUE)
+    rec = mean(cm$byClass[(7*0+1):(7*0+7)], na.rm = TRUE)
+    fm = (2*prec*rec)/(prec+rec)
     
     aux = unlist(strsplit(bases[i], "_"))
     
@@ -92,7 +110,10 @@ for(i in 1:6) {
       metodo[cont] = methods[k]
       resample[cont] = r
       acerto[cont] = model$resample$Accuracy[r]
-      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      precision[cont] = prec
+      recall[cont] = rec
+      fmeasure[cont] = fm
+      #melhor[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
       cont = cont + 1
     }
   }
@@ -147,6 +168,12 @@ for(i in 1:6) {
     predictors = names(dataset)[names(dataset) != "class"]
     
     model = caret::train(class ~ ., data = dataset, method = methods[k], trControl = ctrl, tuneLength = 5)
+    pred = model$pred$pred
+    ref = model$pred$obs
+    cm = caret::confusionMatrix(pred, ref)
+    prec = mean(cm$byClass[(7*2+1):(7*2+7)], na.rm = TRUE)
+    rec = mean(cm$byClass[(7*0+1):(7*0+7)], na.rm = TRUE)
+    fm = (2*prec*rec)/(prec+rec)
     
     aux = unlist(strsplit(bases[i], "_"))
     
@@ -159,7 +186,10 @@ for(i in 1:6) {
       metodo[cont] = methods[k]
       resample[cont] = r
       acerto[cont] = model$resample$Accuracy[r]
-      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      precision[cont] = prec
+      recall[cont] = rec
+      fmeasure[cont] = fm
+      #melhor[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
       cont = cont + 1
     }
   }
@@ -180,6 +210,14 @@ for(i in 1:6) {
     predictors = names(dataset)[names(dataset) != "class"]
     
     model = caret::train(class ~ ., data = dataset, method = methods[k], trControl = ctrl, tuneLength = 5)
+    pred = model$pred$pred
+    ref = model$pred$obs
+    cm = caret::confusionMatrix(pred, ref)
+    prec = mean(cm$byClass[(7*2+1):(7*2+7)], na.rm = TRUE)
+    rec = mean(cm$byClass[(7*0+1):(7*0+7)], na.rm = TRUE)
+    fm = (2*prec*rec)/(prec+rec)
+    
+    aux = unlist(strsplit(bases[i], "_"))
     
     for(r in 1:30) {
       tec[cont] = tecnica
@@ -190,7 +228,10 @@ for(i in 1:6) {
       metodo[cont] = methods[k]
       resample[cont] = r
       acerto[cont] = model$resample$Accuracy[r]
-      # acerto[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
+      precision[cont] = prec
+      recall[cont] = rec
+      fmeasure[cont] = fm
+      #melhor[cont] = model$results$Accuracy[as.numeric(row.names(model$bestTune[1]))]
       cont = cont + 1
     }
   }
@@ -255,5 +296,5 @@ for(i in 1:6) {
 #   }
 # }
 
-resultados = data.frame(tec, prim, classe, descritor, lv, metodo, resample, acerto)
-colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Resample", "Acuracia")
+resultados = data.frame(tec, prim, classe, descritor, lv, metodo, resample, acerto, precision, recall, fmeasure)
+colnames(resultados) = c("Tecnica", "P/C", "Classe", "Descritor", "LV", "N", "Resample", "Acuracia", "Precisao", "Recall", "F-Measure")
