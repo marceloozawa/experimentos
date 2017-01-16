@@ -95,8 +95,9 @@ for(i in 1:6) {
     pred = model$pred$pred
     ref = model$pred$obs
     cm = caret::confusionMatrix(pred, ref)
-    prec = mean(cm$byClass[(7*2+1):(7*2+7)], na.rm = TRUE)
-    rec = mean(cm$byClass[(7*0+1):(7*0+7)], na.rm = TRUE)
+    levels = nlevels(dataset$class)
+    prec = mean(cm$byClass[(levels*2+1):(levels*2+levels)], na.rm = TRUE)
+    rec = mean(cm$byClass[(levels*0+1):(levels*0+levels)], na.rm = TRUE)
     fm = (2*prec*rec)/(prec+rec)
     
     aux = unlist(strsplit(bases[i], "_"))
